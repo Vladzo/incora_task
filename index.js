@@ -1,6 +1,10 @@
 const express = require('express');
 require('dotenv').config();
 
+// const { sequelize } = require("./database");
+const sequelize = require('./db');
+//const { UserModel } = require('./models');
+//const { TestModel } = require('./models');
 const { constants: { Port, Unknown_Error, Route_Not_Found } } = require('./constants');
 const { userRouter } = require('./routes');
 
@@ -14,9 +18,26 @@ app.use('/users', userRouter);
 app.use('*', _notFoundHandler);
 app.use(_handleErrors);
 
-app.listen(Port, () => {
-    console.log(`App listen ${Port}`);
-});
+//connection.getInstance().setModels();
+
+const start = async () => {
+    try {
+        await sequelize.authenticate();
+        await sequelize.sync();
+
+        app.listen(Port, () => {
+            console.log(`App listen ${Port}`);
+        });
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+start();
+
+// app.listen(Port, () => {
+//     console.log(`App listen ${Port}`);
+// });
 
 function _handleErrors(err, req, res, next) {
     res
@@ -30,6 +51,7 @@ function _handleErrors(err, req, res, next) {
 function _notFoundHandler(err, req, res, next) {
     next({
         message: err.message || Route_Not_Found,
-        status: err.status || 404
+        customCode: err.customCode || 0,
+        status: err.status || 0
     })
 }
