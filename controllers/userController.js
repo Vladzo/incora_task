@@ -1,29 +1,78 @@
+const { Op } = require("sequelize");
+
 const ErrorHandler = require("../errors/ErrorHandler");
-const { UserModel, TestModel } = require('../models');
-const { userHelper } = require('../helpers');
+const {passwordHasher} = require("../helpers");
+const {UserModel, TestModel} = require('../models');
+const {userHelper} = require('../helpers');
 
 module.exports = {
-    getAllUsers: async (reg, res) => {
-        const users = await UserModel.findAll();
+    createUser: async (req, res, next) => {
+        try {
+            const { body: { first_name, last_name, password, email, phone } } = req;
 
-        const normalizedUsers = users.map(user => userHelper.userNormalizator(user.dataValues));
+            const hashedPassword = await passwordHasher.hash(password);
 
-        res.json({ normalizedUsers });
+            const createdUser = await UserModel.create({ ...req.body, password: hashedPassword })
+
+            // const { _id } = createdUser;
+            // const { accessToken, refreshToken } = authService.getTokenPair();
+            //
+            // await Oauth.create({ accessToken, refreshToken, user: _id });
+
+            const normalizedUser = userHelper.userNormalizator(createdUser.dataValues);
+
+            res.status(200).json(normalizedUser);
+        } catch (err) {
+            next(err);
+        }
     },
 
-    getUser: (reg, res) => {
-        res.json('One user');
+    getUser: (req, res, next) => {
+        try {
+            const {user} = req;
+
+            const normalizedUser = userHelper.userNormalizator(user);
+
+            res.status(200).json(normalizedUser);
+        } catch (err) {
+            next(err);
+        }
     },
 
-    createUser: (reg, res) => {
-        res.json('One user');
-    },
+    updateUser: async (req, res, next) => {
+        try {
+            const isThisEmail = await UserModel.findOne({where: {email: req.body.email, id: { [Op.not]: req.params.userId }}});
 
-    deleteUser: (reg, res) => {
-        res.json('Delete user');
-    },
+            if (isThisEmail) {
+                throw new ErrorHandler(405, 'Email already exist', "405.0");
+            }
 
-    updateUser: (reg, res) => {
-        res.json('Update user');
+            const value = Number(req.params.userId);
+
+            const user = await UserModel.findOne({ where: { id: value } });
+
+            if (!user) {
+                throw new ErrorHandler(404, 'RECORD_NOT_FOUND', '404.0');
+            }
+
+            for (let key in req.body) {
+                if (key === 'password') {
+                    const hashedPassword = await passwordHasher.hash(req.body[key]);
+
+                    user[key] = hashedPassword;
+                    continue;
+                }
+
+                user[key] = req.body[key];
+            }
+
+            await user.save();
+
+            const normalizedUsers = userHelper.userNormalizator(user.dataValues);
+
+            res.json(normalizedUsers);
+        } catch (err) {
+            next(err);
+        }
     }
 }
