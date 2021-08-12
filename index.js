@@ -2,6 +2,7 @@ const express = require('express');
 require('dotenv').config();
 
 const sequelize = require('./db');
+const { UserModel, OauthModel } = require('./models');
 const { constants: { Port, Unknown_Error, Route_Not_Found } } = require('./constants');
 const { userRouter, loginRouter } = require('./routes');
 
