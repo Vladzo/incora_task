@@ -8,7 +8,7 @@ const { userHelper } = require('../helpers');
 module.exports = {
     createUser: async (req, res, next) => {
         try {
-            const { body: { first_name, last_name, password, email, phone } } = req;
+            const { body: {  password } } = req;
 
             const hashedPassword = await passwordHasher.hash(password);
 
