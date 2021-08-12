@@ -1,9 +1,9 @@
 const { Op } = require("sequelize");
 
 const ErrorHandler = require("../errors/ErrorHandler");
-const {passwordHasher} = require("../helpers");
-const {UserModel, TestModel} = require('../models');
-const {userHelper} = require('../helpers');
+const { passwordHasher } = require("../helpers");
+const { UserModel } = require('../models');
+const { userHelper } = require('../helpers');
 
 module.exports = {
     createUser: async (req, res, next) => {
@@ -13,11 +13,6 @@ module.exports = {
             const hashedPassword = await passwordHasher.hash(password);
 
             const createdUser = await UserModel.create({ ...req.body, password: hashedPassword })
-
-            // const { _id } = createdUser;
-            // const { accessToken, refreshToken } = authService.getTokenPair();
-            //
-            // await Oauth.create({ accessToken, refreshToken, user: _id });
 
             const normalizedUser = userHelper.userNormalizator(createdUser.dataValues);
 

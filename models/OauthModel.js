@@ -1,32 +1,29 @@
 const sequelize = require('../db');
 const { DataTypes } = require('sequelize');
 
-const User = sequelize.define("user", {
+const Oauth = sequelize.define("oauth", {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false
     },
-    first_name: {
+    access_token: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    last_name: {
-        type: DataTypes.STRING
-    },
-    email: {
+    refresh_token: {
         type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
+        allowNull: false
     },
-    phone: {
-        type: DataTypes.STRING
-    },
-    password: {
-        type: DataTypes.STRING
+    user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     }
 });
 
+Oauth.associate = (models) => {
+    Oauth.belongsTo(models.user, {foreignKey: 'user_id'});
+};
 
-module.exports = User;
+module.exports = Oauth;

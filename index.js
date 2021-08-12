@@ -2,8 +2,6 @@ const express = require('express');
 require('dotenv').config();
 
 const sequelize = require('./db');
-//const { UserModel } = require('./models');
-//const { TestModel } = require('./models');
 const { constants: { Port, Unknown_Error, Route_Not_Found } } = require('./constants');
 const { userRouter, loginRouter } = require('./routes');
 
@@ -30,8 +28,6 @@ const start = (async () => {
         console.log(err);
     }
 })();
-
-//start();
 
 function _handleErrors(err, req, res, next) {
     res

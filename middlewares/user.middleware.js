@@ -1,8 +1,6 @@
 const {createUserValidator, updateUserValidator} = require("../validator");
 const {
-    ErrorHandler, errorMessages: {
-        RECORD_NOT_FOUND
-    }
+    ErrorHandler
 } = require('../errors');
 const { UserModel } = require('../models')
 

@@ -9,4 +9,10 @@ module.exports = {
     Db_Port: process.env.Db_Port || 5432,
     Db_Dialect: 'postgres',
     SALT: 10,
+    ACCESS_SECRET_KEY: process.env.ACCESS_SECRET_KEY || 'xxx',
+    REFRESH_SECRET_KEY: process.env.REFRESH_SECRET_KEY || 'yyy',
+    ACCESS_TOKEN_TIME: process.env.ACCESS_TOKEN_TIME || '1d',
+    REFRESH_TOKEN_TIME: process.env.REFRESH_TOKEN_TIME || '5d',
+    REFRESH: 'refresh',
+    ACCESS: 'access',
 }

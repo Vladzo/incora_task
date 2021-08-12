@@ -3,8 +3,6 @@ const router = require('express').Router();
 const { userController } = require('../controllers');
 const { userMiddleware } = require('../middlewares');
 
-//router.use('/:userId', userMiddleware.getUserById);
-
 router.post('/', userMiddleware.checkCreateUserValidity, userMiddleware.canUserRegister, userController.createUser);
 
 router.get('/:userId', userMiddleware.getUserById, userController.getUser);
